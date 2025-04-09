@@ -18,6 +18,7 @@ def character(stdscr):
 
     while key != ord("q"):  # Appuyer sur q pour quitter
         stdscr.clear() 
+        stdscr.border()
         stdscr.addstr(y, x, "@")
         coord_x, coord_y = curses.getsyx()
         stdscr.refresh()
