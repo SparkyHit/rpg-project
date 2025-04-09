@@ -1,0 +1,51 @@
+"""Module qui crée un personnage contrôlable avec wasd ou la souris.
+
+fait par Kevin Dao le 05.04.2025"""
+
+import curses
+
+
+def character(stdscr):
+    """initialisation de l'écran 'character'. """
+    curses.curs_set(0)  # Cacher le curseur
+    stdscr.nodelay(True) # Ne pas bloquer sur getch()
+    stdscr.timeout(100)  # Actualisation toutes les 100 ms
+    curses.mousemask(-1) # Active toutes les actions de la souris
+
+    # Position initiale du personnage au centre de l'écran
+    x, y = curses.COLS // 2, curses.LINES // 2
+    key = 0
+
+    while key != ord("q"):  # Appuyer sur q pour quitter
+        stdscr.clear() 
+        stdscr.addstr(y, x, "@")
+        coord_x, coord_y = curses.getsyx()
+        stdscr.refresh()
+
+        # fenêtre des coordonnées du personnage
+        win = curses.newwin(3, 18, 0, 0)
+        win.box()
+        win.addstr(1, 1, f"coords: ({coord_x}, {coord_y})")
+        win.refresh()
+
+        key = stdscr.getch()  # Lire la touche
+
+        # Gérer les déplacements (min/max pour ne pas "sortir" de l'écran)
+        if key == ord("w"):
+            y = max(0, y - 1)
+        elif key == ord("s"):
+            y = min(curses.LINES - 2, y + 1)
+        elif key == ord("a"):
+            x = max(0, x - 1)
+        elif key == ord("d"):
+            x = min(curses.COLS - 1, x + 1)
+        elif key == curses.KEY_MOUSE:
+            try:
+                _, mx, my, _, _ = curses.getmouse()
+                y, x = my, mx
+            except curses.error:
+                pass 
+
+
+if __name__ == "__main__":
+    curses.wrapper(character)
